@@ -1,0 +1,95 @@
+{% extends "theme.html" %}
+{% load static%}
+{% block content%}
+            <!-- Search form -->
+            <div class="row tm-row">
+                <div class="col-12">
+                    <form method="GET" class="form-inline tm-mb-80 tm-search-form">                
+                        <input class="form-control tm-search-input" name="search" type="text" placeholder="Search..." aria-label="Search">
+                        <button class="tm-search-button" type="submit">
+                            <i class="fas fa-search tm-search-icon" aria-hidden="true"></i>
+                        </button>                                
+                    </form>
+                </div>                
+            </div>         
+            <div class="row tm-row">
+                {% for eachPost  in post %}
+                <article class="col-12 col-md-6 tm-post">
+                    <hr class="tm-hr-primary">
+                    <a href="{% url "details" eachPost.id %}" class="effect-lily tm-post-link tm-pt-60">
+                        <div class="tm-post-link-inner">
+                            <img src="{{eachPost.image.url}}" alt="Image" class="img-fluid" style="height:300px">                            
+                        </div>
+                        <span class="position-absolute tm-new-badge">New</span>
+                        <h2 class="tm-pt-30 tm-color-primary tm-post-title">{{eachPost.title}}</h2>
+                    </a>                    
+                    <p class="tm-pt-30">
+                       {{eachPost.content}}
+                    </p>
+                    <div class="d-flex justify-content-between tm-pt-45">
+                        <!-- <span class="tm-color-primary">Travel . Events</span> -->
+                        <span class="tm-color-primary">{{eachPost.created_at}}</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <a href="{% url "details" eachPost.id %}"><span>{{ eachPost.total_comments}} comments</span></a>
+                        <span>by {{ eachPost.created_user}}</span>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <!-- <div class="row tm-row tm-mt-100 tm-mb-75">
+                <div class="tm-prev-next-wrapper">
+                    <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled tm-mr-20">Prev</a>
+                    <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next">Next</a>
+                </div>
+                <div class="tm-paging-wrapper">
+                    <span class="d-inline-block mr-3">Page</span>
+                    <nav class="tm-paging-nav d-inline-block">
+                        <ul>
+                            <li class="tm-paging-item active">
+                                <a href="#" class="mb-2 tm-btn tm-paging-link">1</a>
+                            </li>
+                            <li class="tm-paging-item">
+                                <a href="#" class="mb-2 tm-btn tm-paging-link">2</a>
+                            </li>
+                            <li class="tm-paging-item">
+                                <a href="#" class="mb-2 tm-btn tm-paging-link">3</a>
+                            </li>
+                            <li class="tm-paging-item">
+                                <a href="#" class="mb-2 tm-btn tm-paging-link">4</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>                
+            </div>             -->
+            <div class="row tm-row tm-mt-100 tm-mb-75">
+                <div class="tm-prev-next-wrapper">
+                    {% if post.has_previous %}
+                        <a href="?page={{ post.previous_page_number }}" class="mb-2 tm-btn tm-btn-primary tm-prev-next tm-mr-20">Prev</a>
+                    {% else %}
+                        <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled tm-mr-20">Prev</a>
+                    {% endif %}
+            
+                    {% if post.has_next %}
+                        <a href="?page={{ post.next_page_number }}" class="mb-2 tm-btn tm-btn-primary tm-prev-next">Next</a>
+                    {% else %}
+                        <a href="#" class="mb-2 tm-btn tm-btn-primary tm-prev-next disabled">Next</a>
+                    {% endif %}
+                </div>
+            
+                <div class="tm-paging-wrapper">
+                    <span class="d-inline-block mr-3">Page</span>
+                    <nav class="tm-paging-nav d-inline-block">
+                        <ul>
+                            {% for num in post.paginator.page_range %}
+                                <li class="tm-paging-item {% if num == post.number %}active{% endif %}">
+                                    <a href="?page={{ num }}" class="mb-2 tm-btn tm-paging-link">{{ num }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            
+            {% endblock%}

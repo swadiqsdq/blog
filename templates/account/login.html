@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        /* Background with dark neon effect */
+        body {
+            background: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        /* Neon Glow Form */
+        .login-container {
+            width: 100%;
+            max-width: 380px;
+            padding: 30px;
+            border-radius: 12px;
+            background: rgba(18, 18, 18, 0.9);
+            box-shadow: 0px 0px 10px rgba(255, 0, 150, 0.6);
+            text-align: center;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        /* Fade-in effect */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Floating Input Fields */
+        .form-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            background: transparent;
+            border: 2px solid rgba(255, 0, 150, 0.6);
+            color: #fff;
+            padding: 12px 10px;
+            border-radius: 5px;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 10px rgba(255, 0, 150, 0.6);
+            outline: none;
+        }
+
+        .form-group label {
+            position: absolute;
+            top: 12px;
+            left: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .form-control:focus + label,
+        .form-control:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 8px;
+            font-size: 12px;
+            color: rgba(255, 0, 150, 0.8);
+        }
+
+        /* Neon Button */
+        .btn-primary {
+            background: linear-gradient(45deg, #ff00cc, #3333ff);
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 6px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 15px rgba(255, 0, 150, 0.6);
+        }
+
+        /* Popup Messages */
+        .popup-container {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1050;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .popup-message {
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+            animation: bounceIn 0.5s ease-in-out;
+        }
+
+        /* Link Styling */
+        .neon-link {
+            color: rgba(255, 0, 150, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 15px;
+            margin: 5px 0;
+        }
+
+        .neon-link i {
+            filter: drop-shadow(0 0 2px rgba(255, 0, 150, 0.6));
+            transition: all 0.3s ease;
+            margin-right: 8px;
+        }
+
+        .neon-link:hover {
+            color: #ff00cc;
+            text-shadow: 0 0 10px rgba(255, 0, 150, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .neon-link:hover i {
+            transform: rotate(-10deg) scale(1.1);
+        }
+
+        .neon-link::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: linear-gradient(90deg, transparent, #ff00cc, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .neon-link:hover::after {
+            opacity: 1;
+        }
+
+        .links-container {
+            margin-top: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* Input field enhancements */
+        .form-control {
+            color: #fff !important;
+            background: rgba(0, 0, 0, 0.5) !important;
+        }
+
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-box-shadow: 0 0 0 30px rgba(0, 0, 0, 0.5) inset !important;
+            -webkit-text-fill-color: #fff !important;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            60% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Popup Messages -->
+<div class="popup-container">
+    {% for message in messages %}
+        <div class="popup-message {% if message.tags == 'error' %}bg-danger text-white{% else %}bg-success text-white{% endif %}" id="popup-{{ forloop.counter }}">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+
+<!-- Login Form -->
+<div class="login-container">
+    <h3 class="text-white mb-4">🔒 Secure Login</h3>
+    <form action="" method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <input type="text" name="username" class="form-control" placeholder=" " required>
+            <label>Username*</label>
+        </div>
+        
+        <div class="form-group">
+            <input type="password" name="password" class="form-control" placeholder=" " required>
+            <label>Password*</label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100 mt-3">Login</button>
+
+        <!-- Enhanced Links Section -->
+        <div class="links-container">
+            <a href="{% url 'register' %}" class="neon-link">
+                <i class="fas fa-user-plus"></i>
+                Create New Account
+            </a>
+            <a href="{% url 'forgotPassword' %}" class="neon-link">
+                <i class="fas fa-key"></i>
+                Forgot Password?
+            </a>
+        </div>
+    </form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let popups = document.querySelectorAll(".popup-message");
+        popups.forEach((popup, index) => {
+            setTimeout(() => {
+                popup.style.display = "block";
+                setTimeout(() => {
+                    popup.style.opacity = "0";
+                    setTimeout(() => popup.remove(), 500);
+                }, 3000);
+            }, index * 500);
+        });
+    });
+</script>
+
+</body>
+</html>
