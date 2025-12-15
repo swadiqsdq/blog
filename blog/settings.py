@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.vercel.app']
 
@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'post',
     'account',
     'crispy_forms',
-    'crispy_bootstrap5'
+    'crispy_bootstrap5',
+    'storages',
 ]
 
 MIDDLEWARE = [
@@ -143,6 +144,18 @@ USE_I18N = True
 
 USE_TZ = True
 
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+SUPABASE_URL = "https://yfdbydnymhoauxxxynuh.supabase.co"
+SUPABASE_KEY = "sb_secret_nT3sweTEGJs-FeYSQr3Z0g_3id-5BPH"
+
+AWS_ACCESS_KEY_ID = SUPABASE_KEY
+AWS_SECRET_ACCESS_KEY = SUPABASE_KEY
+AWS_STORAGE_BUCKET_NAME = "media"
+AWS_S3_ENDPOINT_URL = f"{SUPABASE_URL}/storage/v1/s3"
+AWS_S3_REGION_NAME = "us-east-1"
+
+MEDIA_URL = f"{SUPABASE_URL}/storage/v1/object/public/media/"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
