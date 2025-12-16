@@ -18,7 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --------------------------------------------------
 SECRET_KEY = config('SECRET_KEY')
 
-DEBUG = True  # Set False in production if needed
+# Reads DEBUG value from .env, defaults to False for production
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1']
 
@@ -51,20 +52,18 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
-
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'django_auto_logout.middleware.auto_logout',
 ]
 
 
 # --------------------------------------------------
-# AUTO LOGOUT
+# AUTO LOGOUT & SESSIONS
 # --------------------------------------------------
 AUTO_LOGOUT = {
     'IDLE_TIME': timedelta(hours=1),
@@ -143,29 +142,31 @@ USE_TZ = True
 # --------------------------------------------------
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# --------------------------------------------------
-# MEDIA FILES (Supabase Storage — CRITICAL)
-# --------------------------------------------------
+# ---------------- MEDIA (SUPABASE STORAGE) ----------------
+# Uses Supabase S3 API to handle file storage, resolving the Read-only file system error on Vercel.
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 SUPABASE_URL = config('SUPABASE_URL')
-SUPABASE_KEY = config('SUPABASE_KEY')
+SUPABASE_REGION = config('SUPABASE_REGION')
+SUPABASE_PROJECT_REF = config('SUPABASE_PROJECT_REF')
 
-AWS_ACCESS_KEY_ID = SUPABASE_KEY
-AWS_SECRET_ACCESS_KEY = SUPABASE_KEY
+# S3 Configuration using Supabase keys:
+# AWS_ACCESS_KEY_ID uses the Project REF as a placeholder.
+# AWS_SECRET_ACCESS_KEY must use the highly secret SUPABASE_SERVICE_ROLE_KEY (JWT).
+AWS_ACCESS_KEY_ID = SUPABASE_PROJECT_REF
+AWS_SECRET_ACCESS_KEY = config('SUPABASE_SERVICE_ROLE_KEY')
 
-AWS_STORAGE_BUCKET_NAME = 'media'
+AWS_STORAGE_BUCKET_NAME = 'media' # The name of your bucket in Supabase
 AWS_S3_ENDPOINT_URL = f'{SUPABASE_URL}/storage/v1/s3'
-AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_REGION_NAME = SUPABASE_REGION
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 AWS_S3_ADDRESSING_STYLE = 'path'
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-MEDIA_URL = f'{SUPABASE_URL}/storage/v1/object/public/media/'
+# Public URL for accessing media files
+MEDIA_URL = f'{SUPABASE_URL}/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}/'
 
 
 # --------------------------------------------------
@@ -182,12 +183,13 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 
 
 # --------------------------------------------------
-# EMAIL (use ENV VARS only)
+# EMAIL
 # --------------------------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+# Values taken from .env file
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

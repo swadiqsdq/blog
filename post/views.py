@@ -23,7 +23,6 @@ def index(request):
     page_number = request.GET.get('page')
     posts = paginator.get_page(page_number)
 
-    print(post)
     return render(request,'index.html',{'post':post})
 
 # post new data
