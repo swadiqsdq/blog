@@ -82,3 +82,5 @@ websockets==14.2
 whitenoise==6.9.0
 yarl==1.18.3
 zope.interface==7.2
+django-storages
+boto3
