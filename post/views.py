@@ -45,7 +45,7 @@ def post(request):
         
         title = request.POST.get('title')
         content = request.POST.get('content')
-        image = request.FILES.get('image')
+        image_file = request.FILES.get('image')
 
 
         image = None
