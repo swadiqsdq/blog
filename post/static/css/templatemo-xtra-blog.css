@@ -651,3 +651,11 @@ a:hover figcaption { color: #056767; }
         margin-top: -50px;
         text-align: center;
       }
+
+      .post-excerpt {
+    display: -webkit-box;
+    -webkit-line-clamp: 4; /* Change this to 3 if you prefer */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

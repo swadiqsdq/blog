@@ -24,8 +24,9 @@
                         <span class="position-absolute tm-new-badge">New</span>
                         <h2 class="tm-pt-30 tm-color-primary tm-post-title">{{eachPost.title}}</h2>
                     </a>                    
-                    <p class="tm-pt-30">
-                       {{eachPost.content}}
+                    <p class="tm-pt-30 post-excerpt">
+                       {{ eachPost.content|truncatewords:30 }}
+                        <a href="{% url 'details' eachPost.id %}" class="tm-color-primary">Read More</a>
                     </p>
                     <div class="d-flex justify-content-between tm-pt-45">
                         <!-- <span class="tm-color-primary">Travel . Events</span> -->
