@@ -6,6 +6,7 @@ from django.db.models import Count
 from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
+from .utils import upload_to_supabase
 
 
 # Create your views here.
@@ -45,6 +46,11 @@ def post(request):
         title = request.POST.get('title')
         content = request.POST.get('content')
         image = request.FILES.get('image')
+
+
+        image = None
+        if image_file:
+            image = upload_to_supabase(image_file)
 
         Post.objects.create(
             title =title,

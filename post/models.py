@@ -1,12 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from storages.backends.s3boto3 import S3Boto3Storage
 # Create your models here.
 
 class Post(models.Model):
     title = models.CharField(max_length=100)
     content = models.TextField()
-    image = models.ImageField(upload_to='images/', blank=True, storage=S3Boto3Storage())
+    image = models.ImageField(upload_to='images/', blank=True)
     created_at = models.DateTimeField(auto_now_add = True)
     created_user = models.ForeignKey(User,on_delete=models.CASCADE,blank=True)
 
